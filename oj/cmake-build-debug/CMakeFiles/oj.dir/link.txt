@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/oj.dir/1st/a.cpp.o CMakeFiles/oj.dir/1st/b.cpp.o CMakeFiles/oj.dir/1st/c.cpp.o CMakeFiles/oj.dir/1st/d.cpp.o CMakeFiles/oj.dir/1st/e.cpp.o  -o oj 

@@ -1,0 +1,197 @@
+\documentclass[a4paper,UTF8]{article}
+\usepackage{ctex}
+\usepackage[margin=1.25in]{geometry}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{fancyhdr}
+\usepackage{extramarks}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{listings}
+
+%\usepackage[thmmarks, amsmath, thref]{ntheorem}
+\theoremstyle{definition}
+\newtheorem*{solution}{Solution}
+\newtheorem*{prove}{Proof}
+\usepackage{multirow}
+
+%
+% Basic Document Settings
+%
+
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.1}
+
+\pagestyle{fancy}
+\lhead{\hmwkTitle}
+\chead{\hmwkClass\ (\hmwkClassInstructor\ \hmwkClassTime)}
+\rhead{\hmwkAuthorName}
+\lfoot{\lastxmark}
+\cfoot{\thepage}
+
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+%
+% Homework Details
+%   - Title
+%   - Due date
+%   - Class
+%   - Section/Time
+%   - Instructor
+%   - Author
+%
+
+\newcommand{\hmwkTitle}{Assignment \ \#2}
+\newcommand{\hmwkDueDate}{September 11, 2017}
+\newcommand{\hmwkClass}{Problem Solving}
+\newcommand{\hmwkClassTime}{}
+\newcommand{\hmwkClassInstructor}{Professor Chen}
+\newcommand{\hmwkAuthorName}{李志琦 161220074}
+
+%--
+
+%--
+\begin{document}
+
+\section*{Chapter 25 }
+
+\subsection*{25.1-4}
+
+  要证明算法中矩阵的乘法满足结合率，要满足：
+
+  $$(L_iL_j)L_k = L_i(L_jL_k)$$
+  Answer:\\
+  \begin{eqnarray*}
+  (L_iL_j)L_k=M_1\\
+  L_i(L_jL_k)=M_2\\
+  M_1[a][b] & = & min_{1\leq m \leq n}(L_iL_j)[a][m]+L_k[m][b]\\
+            & = & min_{1\leq m \leq n}min_{1\leq k \leq n}(L_i[a][k]+L_j[k][m]+L_k[m][b])\\
+            & = & min_{1\leq k \leq n}(L_i[a][k]+min_{1\leq m \leq n}(L_j[k][m]+L_k[m][b]))\\
+            & = & min_{1\leq k \leq n}(L_jL_k)[k][b]+L_i[a][k]\\
+            & = & M_2[a][b]\\
+           M_1[a][b]=M_2[a][b]
+  \end{eqnarray*}
+所以满足结合率
+\subsection*{25.1-5}
+我们很容易在all pairs 的最终结果矩阵中，通过某一行的数据就可以构造出来单元最短路树，
+所以如果只求一颗单元最短路树，我们要的就是矩阵的那一行而已。
+所以我们只用一个vector v表示所有点到源的距离，首先初始化，跟矩阵的初始化一样。
+然后 $v_{i+1}=v_iW$  当算到$v_{n-1}$就得到了正确的答案,所以乘（n-2）次就行了。\\
+与bellman ford 算法的相似性：
+
+相乘就相当于bellman ford的relax
+
+
+\subsection*{25.1-6}
+一个n*n的矩阵，我们需要算出没每个位置的父节点，所以我们需要一个二重循环，
+
+每$n^2$次循环的每一次循环中，我们知道$L_{ij}=L{ik}+w（k，j$，所以枚举n次k,我们就能找到答案。
+
+
+\subsection*{25.1-9}
+\begin{algorithm}[h]
+  \caption{FASTER-ALL-PAIRS-SHORTEST-PATHS($W$)}
+  \begin{algorithmic}[1]
+   \item n=W.rows
+   \item l[1] = W
+   \item m = 1
+  \While {m<n-1}
+    \State let l[2m] be a new n*n marticx
+    \State l[2m] = EXTENDED-SHORTEST-PATHS(l[m],l[m])
+    \State m=2m;
+  \EndWhile
+
+  \item l[n] =EXTENDED-SHORTEST-PATHS(l[m],l[m])
+
+  \If {l[m]\ !=\ l[n]}
+        \State has negative-weight circle
+  \EndIf
+  \end{algorithmic}
+\end{algorithm}
+
+\subsection*{25.1-10}
+如果有负圈，那么当当一个circle之后 $W[i][i]<0$;
+所以在slow all pairs 算法中每extend一次我们就检查一下是否有W[i][j]<0
+如果有那么当前的循环的i就是圈的长度
+\subsection*{25.2-2}
+矩阵初始化的时候也是有边就赋值为1(自身也是1),没边赋值为0,
+算min的时候改为$l[i][j]|(l[i][k]\&w(i,k))$
+最后矩阵中为1的就表示有边
+
+
+\subsection*{25.2-4}
+
+我们将原来的$O(n^3)$和现在的$O(n^2)$
+对比，现在的算法只用了一个矩阵，但是看关系式子
+$$d_{ij}=min(d_{ij}，d_{ik})+d_{kj}$$
+原来的算法的式
+$$d_{ij}^m=min(d_{ik}^{m-1},d_{ik}^{m-1}+d_{kj}^{m-1})$$
+因为在更新新的矩阵$d_{ij}$之前$d_{ij}$的值其实就是$d_{ij}^{m-1}$\\
+而$d_[ik]+d_{kj}$至少不必$d_{ik}^{m-1}+d_{kj}^{m-1}$小，因为我们要的是更小，所以\\
+$d_[ij]$得到的结果至少不必的另一个算法的$d_{ij}^m$小，所以最后依然能得到正确的结果。\\
+
+\subsection*{25.2-6}
+只要矩阵中对角线上有小于零的值，就有副回路，应为，如果有负回路，那么一圈下来，点到自身的距离就会小于0.
+
+ \subsection*{24.2-8}
+
+ 首先构造一个n*n的矩阵M，有边为1,没边为0，
+$|v|$个点每一点v，做一个循环，然后dfs（v,v）
+\begin{algorithm}[h]
+
+  \caption{dfs($v_1$,$v$)}
+  \begin{algorithmic}[1]
+   \item M[$v_1$][$v$]=1
+   \For { each u in G.adj[$v_1$]}
+        \If {!vis[u]}  \# let v is be a n-array,to index if vertice u is visited
+          \State dfs(u,$v$)
+        \EndIf
+  \EndFor
+  \end{algorithmic}
+\end{algorithm}
+每一个dfs(v,v)是$O(E)$,所以总代价是$O(EV)$
+
+\subsection*{25.3-2}
+加上这个点，我们肯定能判断出来是否有负回路，但是如果我们只是从原来图上任意选择一个，如果图不是联通的，那么有可能检测不到负圈。\\
+如果没有负回路，那么得到$h(v)=\delta (s,v)$，能够得b到符合条件的h(v)函数
+\subsection*{25.3-3}
+相等，因为h(v)=0对于任意一点v\\
+因为 $h(v)=\delta (s,v)$，但是因为所有的边都是正值，所以$\delta (s,v)=0$
+\subsection*{25-2}
+\subsubsection*{a}
+最小堆和最大堆的效率是一样的，所以参考$6-2$, $Insert，extract-min，decrease_key$的代价分别为：
+$O(\log_{d}{n}),O(d\log_{d}{n}),O(\log_{d}{n})$\\
+if $d=\theta(n^{\alpha})$ 三个代价分别为$O(\frac{1}{\alpha}),O(\frac{n^{\alpha}}{\alpha}),O(\frac{1}{\alpha})$\\
+$fibonacci\_heap$ 的三个操作代价以此为$O(1)，O(\log{n}),O(1)$
+\subsubsection*{b}
+另$d=n^{\varepsilon }$,因为总n次$ECTRACT-MIN$和最多E次$descease-key$操作 ，所哟
+$O(nd\log_{d}{n}+E(1/\varepsilon))$
+.\\
+$O(\frac{n^{1+ \varepsilon }+E}{\varepsilon})$
+
+$O(n^{1+\varepsilon})$
+
+$O(E)$
+
+\subsection*{c}
+每一个节点都用b中的算法
+\subsection*{d}
+转换weight function,增加一个节点，然后计算新的权重，和书中的方法一样。
+
+\end{document}

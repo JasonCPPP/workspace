@@ -1,0 +1,8 @@
+78 4 -114 56
+The basic unit of computer storage is the bit.
+221 220 217 212 205 196
+129 458
+4 4 NmcxI
+aacccc
+4 6 2 5 3 7 1
+35
